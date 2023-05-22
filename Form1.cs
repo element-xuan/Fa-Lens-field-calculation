@@ -18,7 +18,23 @@ namespace Fa镜头视野计算
             InitializeComponent();
         }
 
-        string[] abs = new string[] {
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            this.label5.Visible = false;
+
+            for (int i = 0; i < TargetSurfaceRange.Length; i++)
+            {
+                this.comboBoxCameraTargetSurface.Items.Add(TargetSurfaceRange[i]);
+            }
+
+            this.comboBoxCameraTargetSurface.SelectedIndex = 0;
+            this.comboBoxFaLens.SelectedIndex = 0;
+        }
+
+        /// <summary>
+        /// 相机靶面范围
+        /// </summary>
+        string[] TargetSurfaceRange = new string[] {
             "1/6(2.3*1.73)",
                 "1/4-640*480(3.1*2.3)",
                 "1/4(3.2*2.4)",
@@ -67,20 +83,10 @@ namespace Fa镜头视野计算
                 "35mm film(36*24)",
                 "Leica S2(45*30)",
                 "Kodak KAF 3900(50.7*39)"};
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            this.label5.Visible = false;
 
-            for (int i = 0; i < abs.Length; i++)
-            {
-                this.comboBoxCameraTargetSurface.Items.Add(abs[i]);
-            }
-
-            this.comboBoxCameraTargetSurface.SelectedIndex = 0;
-            this.comboBoxFaLens.SelectedIndex = 0;
-        }
-
-
+        /// <summary>
+        /// 计算
+        /// </summary>
         private void calculation()
         {
             try
@@ -101,7 +107,11 @@ namespace Fa镜头视野计算
             }
 
         }
-
+        /// <summary>
+        /// 点击计算按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
             calculation();
@@ -110,33 +120,46 @@ namespace Fa镜头视野计算
 
         private void 计算()
         {
-            double num = 0.0;
-            double.TryParse(this.TBDistance.Text, out num);
-            bool flag = num < 1.0;
-            if (flag)
+            try
             {
-                this.TBDistance.Text = "物距参数不对";
-                return;
-            }
-            else
-            {
-                int num2 = this.comboBoxCameraTargetSurface.Text.IndexOf('(') + 1;
-                int num3 = this.comboBoxCameraTargetSurface.Text.IndexOf(')');
-                string text = this.comboBoxCameraTargetSurface.Text.Substring(num2, num3 - num2);
-                string[] array = text.Split(new char[]
+                double num = 0.0;
+                double.TryParse(this.TBDistance.Text, out num);
+                bool flag = num < 1.0;
+                if (flag)
                 {
+                    this.TBDistance.Text = "物距参数不对";
+                    return;
+                }
+                else
+                {
+                    int num2 = this.comboBoxCameraTargetSurface.Text.IndexOf('(') + 1;
+                    int num3 = this.comboBoxCameraTargetSurface.Text.IndexOf(')');
+                    string text = this.comboBoxCameraTargetSurface.Text.Substring(num2, num3 - num2);
+                    string[] array = text.Split(new char[]
+                    {
                     '*'
-                });
-                double num4 = Convert.ToDouble(array[0]);
-                double num5 = Convert.ToDouble(array[1]);
-                double num6 = Convert.ToDouble(this.comboBoxFaLens.Text);
-                double num7 = num * num4 / num6;
-                double num8 = num * num5 / num6;
-                this.TBField.Text = num7.ToString("0.0") + "*" + num8.ToString("0.0");
-                //MessageBox.Show(this.TBField.Text);
+                    });
+                    double num4 = Convert.ToDouble(array[0]);
+                    double num5 = Convert.ToDouble(array[1]);
+                    double num6 = Convert.ToDouble(this.comboBoxFaLens.Text);
+                    double num7 = num * num4 / num6;
+                    double num8 = num * num5 / num6;
+                    this.TBField.Text = num7.ToString("0.0") + "*" + num8.ToString("0.0");
+                }
             }
+            catch (Exception)
+            {
+
+                throw;
+            }
+           
         }
 
+        /// <summary>
+        /// 清空str
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
         static string CleanText(string str)
         {
             str = "";
@@ -163,6 +186,11 @@ namespace Fa镜头视野计算
             this.TBDistance.Text = "";
         }
 
+        /// <summary>
+        /// 超链接跳转
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             System.Diagnostics.Process.Start("explorer.exe", "https://e-yuansu.com/");
